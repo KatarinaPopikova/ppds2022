@@ -12,6 +12,7 @@ class Shared:
 def do_count(shared):
     while shared.counter < shared.end:
         shared.elms[shared.counter] += 1
+
         shared.counter += 1
 
 
