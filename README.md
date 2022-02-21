@@ -19,7 +19,7 @@ If we decide to implement an array in the range of 1_000_000, the same number of
 value of 1. According to following screenshot there are the unexpected elements with value of 2 or 0. Also, some
 original code executions cause indexError.
 
-![problem with threads](images/problemImg.png)
+![problem with threads](images/problem_screen.png)
 
 This problem arises due to competitive programming. When one thread increases the value on the index and after that does
 not increase the index, subsequently program switch to another thread, which also increases the same value. This is
@@ -27,7 +27,7 @@ example when one thread does not finish executing the required work.
 
 For better graphical visualization of the array elements is histogram inserted into this file.
 
-![histogram](images/problemHistogram.png)
+![histogram](images/problem_histogram.png)
 
 **Solution**  
 It is advisable to use 'mutual exclusion' for correct program behavior. It is possible to lock a critical area. One
