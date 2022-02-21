@@ -27,7 +27,10 @@ example when one thread does not finish executing the required work.
 
 For better graphical visualization of the array elements is histogram inserted into this file.
 
-![hostogram](images/problemHistogram.png)
+![histogram](images/problemHistogram.png)
 
 *Solution*:
+It is advisable to use 'mutual exclusion' for correct program behavior. It is possible to lock a critical area. One
+thread lock and execute the critical area and other thread(s) waits for unlock. The mutex must be inserted into the
+program to prevent multiple threads increasing the element value in the array on the same index.
 
