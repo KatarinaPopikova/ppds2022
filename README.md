@@ -35,8 +35,15 @@ thread lock and execute the critical area and other thread(s) waits for unlock. 
 program to prevent multiple threads increasing the element value in the array on the same index.
 
 *Variation_1*:
-Lock whole function `do_count`. The entire while loop is executed under lock. Therefore, it does not happen that
-the second thread successfully entered to loop just before the first thread invalidates the condition. It also does
-not happen that two threads increase the array value on the same index almost at the same time. Unfortunately, whole
-logical part of the program is executed by only one thread and the other does not have time to modify the array, and
-therefore a large part of the program is executed serially.
+Lock whole function `do_count`. The entire while loop is executed under lock. Therefore, it does not happen that the
+second thread successfully entered to loop just before the first thread invalidates the condition. It also does not
+happen that two threads increase the array value on the same index almost at the same time. Unfortunately, whole logical
+part of the program is executed by only one thread and the other does not have time to modify the array, and therefore a
+large part of the program is executed serially. Only one thread increases elements in array.
+
+*Variation_2*:
+Because a large part of the code is executed serially in variation_1, it would be appropriate to modify the locking
+logic. A good solution is when threads will be able to change in the loop. Mutex locks on the beginning of the loop and
+unlock after increasing the element or at the end of array. For control the condition under lock, it must be inserted
+into the body of the loop. In this variation is more competitive programming. In this variation more threads (in this
+case 2) increasing the array elements.   
