@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from collections import Counter
-from fei.ppds import Thread
+from fei.ppds import Thread, Mutex
 
 
 class Shared:
@@ -17,21 +17,28 @@ class Shared:
         self.elms = [0] * size
 
 
-def do_count(shared):
+def do_count(shared, mutex):
     """ Function for increasing the values of array.
 
     :param shared: instance of Shared class
     """
-    while shared.counter < shared.end:
-        shared.elms[shared.counter] += 1
-        shared.counter += 1
+    while True:
+        mutex.lock()
+        if shared.counter < shared.end:
+            shared.elms[shared.counter] += 1
+            shared.counter += 1
+            mutex.unlock()
+        else:
+            mutex.unlock()
+            break
 
 
-size = 1_000_000
+size = 1_000_000_000
 shared = Shared(size)
+mutex = Mutex()
 
-t1 = Thread(do_count, shared)
-t2 = Thread(do_count, shared)
+t1 = Thread(do_count, shared, mutex)
+t2 = Thread(do_count, shared, mutex)
 
 t1.join()
 t2.join()
