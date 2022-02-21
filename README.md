@@ -25,5 +25,9 @@ This problem arises due to competitive programming. When one thread increases th
 not increase the index, subsequently program switch to another thread, which also increases the same value. This is
 example when one thread does not finish executing the required work.
 
+For better graphical visualization of the array elements is histogram inserted into this file.
+
+![hostogram](images/problemHistogram.png)
+
 *Solution*:
 
