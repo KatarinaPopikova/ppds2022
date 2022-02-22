@@ -18,9 +18,10 @@ class Shared:
 
 
 def do_count(shared, mutex):
-    """ Function for increasing the values of array.
+    """Function for increasing the values of array.
 
     :param shared: instance of Shared class
+    :param mutex: synchronization tool to make the critical area atomically executed
     """
     mutex.lock()
 
