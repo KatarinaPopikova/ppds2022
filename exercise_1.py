@@ -1,7 +1,7 @@
 """"Author: Katarína Stasová
     Program uses a simple barrier to execute a part of code with all threads before the next
     part of code start to execute. """
-from fei.ppds import Thread, Semaphore, Mutex, print
+from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
 class SimpleBarrier:
@@ -52,8 +52,29 @@ def use_barrier(barrier, thread_id):
     print("Thread %d after barrier" % thread_id)
 
 
-if __name__ == '__main__':
-    thread_count = 5
+def first_variation(thread_count):
+    """Create threads to execute program with using simple barrier
+
+    :param thread_count: the number of threads used in the program
+    """
     sb = SimpleBarrier(thread_count)
     threads = [Thread(use_barrier, sb, i) for i in range(thread_count)]
     [t.join() for t in threads]
+
+
+def use_event(event, thread_id):
+    print("Thread %d before barrier" % thread_id)
+    event.wait()  # TODO
+    print("Thread %d after barrier" % thread_id)
+
+
+def second_variation(thread_count):
+    event = Event
+    threads = [Thread(use_event, event, i) for i in range(thread_count)]
+    [t.join() for t in threads]
+
+
+if __name__ == '__main__':
+    thread_count = 5
+    first_variation(thread_count)
+    second_variation(thread_count)
