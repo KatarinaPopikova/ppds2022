@@ -3,19 +3,19 @@ from fei.ppds import Thread, Semaphore, Mutex, print
 
 class SimpleBarrier:
     def __init__(self, thread_count):
-        self.N = thread_count
-        self.C = 0
-        self.M = Mutex()
-        self.T = Semaphore(0)
+        self.all_thread_count = thread_count
+        self.count = 0
+        self.mutex = Mutex()
+        self.turnstile = Semaphore(0)
 
     def wait(self):
-        self.M.lock()
-        self.C += 1
-        if self.C == self.N:
-            self.C = 0
-            self.T.signal(self.N)
-        self.M.unlock()
-        self.T.wait()
+        self.mutex.lock()
+        self.count += 1
+        if self.count == self.all_thread_count:
+            self.count = 0
+            self.turnstile.signal(self.all_thread_count)
+        self.mutex.unlock()
+        self.turnstile.wait()
 
 
 def use_barrier(barrier, thread_id):
