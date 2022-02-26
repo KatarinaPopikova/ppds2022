@@ -5,11 +5,11 @@ from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
 class TurnstileSimpleBarrier:
-    """"A simple barrier for waiting for all threads to complete the part of code. It uses turnstile.
+    """"A barrier for waiting for all threads to complete the part of code. It uses turnstile.
     """
 
     def __init__(self, thread_count):
-        """Turnstile simple barrier initialization:
+        """Turnstile barrier initialization:
          all_thread_count - the number of threads used in the program
          count - the number of waiting threads in turnstile
          mutex - synchronization tool to make the critical area atomically executed
@@ -38,11 +38,11 @@ class TurnstileSimpleBarrier:
 
 
 class EventSimpleBarrier:
-    """"A simple barrier for waiting for all threads to complete the part of code. It uses event.
+    """"A barrier for waiting for all threads to complete the part of code. It uses event.
     """
 
     def __init__(self, thread_count):
-        """Event simple barrier initialization:
+        """Event barrier initialization:
          all_thread_count - the number of threads used in the program
          count - the number of waiting threads in event
          mutex - synchronization tool to make the critical area atomically executed
@@ -59,6 +59,7 @@ class EventSimpleBarrier:
         """Waiting until all threads have completed part of the code.
         Between locked mutex is code automatically executed.
         The event method wait() blocks all threads, which invoke it, until method signal() happened.
+        The event method clear() activates wait().
 
         :rtype: None
         """
@@ -75,11 +76,10 @@ class EventSimpleBarrier:
 
 def use_barrier(barrier, thread_id):
     """All threads executing this function. Each of thread print the sentence before barrier with id.
-    Barrier waits for all threads. Each of thread print the sentence after barrier with id.
-    -If barrier is instance of TurnstileSimpleBarrier, it uses turnstile as barrier.
-    -If barrier is instance of EventSimpleBarrier, it uses event as barrier.
+    Barrier waits for all threads. Each of thread print the sentence after barrier with id in the loop.
+    -It uses event as barrier.
 
-    :param barrier: Instance of TurnstileSimpleBarrier or EventSimpleBarrier
+    :param barrier: Instance of EventBarrier
     :param thread_id: Id of thread
 
     :rtype: None
