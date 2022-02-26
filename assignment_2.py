@@ -79,6 +79,29 @@ class EventBarrier:
         self.event.wait()
 
 
+class EventBarrier2:
+
+    def __init__(self, thread_count):
+        self.all_thread_count = thread_count
+        self.count = 0
+        self.mutex = Mutex()
+        self.event = Event()
+
+    def wait(self):
+        self.mutex.lock()
+        self.count += 1
+        if self.count == self.all_thread_count:
+            self.event.signal()
+        self.mutex.unlock()
+        self.event.wait()
+
+        self.mutex.lock()
+        self.count -= 1
+        if self.count == 0:
+            self.event.clear()
+        self.mutex.unlock()
+
+
 def rendezvous(thread_name):
     """ Every threads print 'rendezvous' competitive with their name (with id)
         The print() method from fei.ppds is run synchronously
@@ -167,7 +190,15 @@ def second_variation(thread_count):
     [t.join() for t in threads]
 
 
+def third_variation(thread_count):
+    eb_1 = EventBarrier2(thread_count)
+    eb_2 = EventBarrier2(thread_count)
+    threads = [Thread(use_two_barriers, eb_1, eb_2, 'Thread %d' % i) for i in range(thread_count)]
+    [t.join() for t in threads]
+
+
 if __name__ == '__main__':
     thread_count = 5
     # first_variation(thread_count)
-    second_variation(thread_count)
+    # second_variation(thread_count)
+    third_variation(thread_count)
