@@ -63,8 +63,11 @@ class EventSimpleBarrier:
         :rtype: None
         """
         self.mutex.lock()
+        if self.count == 0:
+            self.event.clear()
         self.count += 1
         if self.count == self.all_thread_count:
+            self.count = 0
             self.event.signal()
         self.mutex.unlock()
         self.event.wait()
@@ -81,9 +84,11 @@ def use_barrier(barrier, thread_id):
 
     :rtype: None
     """
-    print("Thread %d before barrier" % thread_id)
-    barrier.wait()
-    print("Thread %d after barrier" % thread_id)
+    while True:
+        print("Thread %d before barrier" % thread_id)
+        barrier.wait()
+        print("Thread %d after barrier" % thread_id)
+        barrier.wait()
 
 
 def first_variation(thread_count):
