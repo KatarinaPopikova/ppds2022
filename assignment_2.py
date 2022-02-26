@@ -80,14 +80,32 @@ class EventBarrier:
 
 
 class EventBarrier2:
+    """"A barrier for waiting for all threads to complete the part of code. It uses event.
+    In this implemented class are needed two instances of class for reuse barrier.
+    """
 
     def __init__(self, thread_count):
+        """Event barrier initialization:
+         all_thread_count - the number of threads used in the program
+         count - the number of waiting threads in event
+         mutex - synchronization tool to make the critical area atomically executed
+         event - synchronization tool to management threads
+
+        :param thread_count: the number of threads used in the program
+        """
         self.all_thread_count = thread_count
         self.count = 0
         self.mutex = Mutex()
         self.event = Event()
 
     def wait(self):
+        """Waiting until all threads have completed part of the code.
+        Between locked mutex is code automatically executed.
+        The event method wait() blocks all threads, which invoke it, until method signal() happened.
+        The event method clear() activates wait(), when each thread is released from the barrier.
+
+        :rtype: None
+        """
         self.mutex.lock()
         self.count += 1
         if self.count == self.all_thread_count:
@@ -191,6 +209,13 @@ def second_variation(thread_count):
 
 
 def third_variation(thread_count):
+    """Create threads to execute program with using event
+
+    :param thread_count: the number of threads used in the program
+
+    :rtype: None
+    """
+
     eb_1 = EventBarrier2(thread_count)
     eb_2 = EventBarrier2(thread_count)
     threads = [Thread(use_two_barriers, eb_1, eb_2, 'Thread %d' % i) for i in range(thread_count)]
