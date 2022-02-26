@@ -43,44 +43,6 @@ class TurnstileBarrier:
 
 class EventBarrier:
     """"A barrier for waiting for all threads to complete the part of code. It uses event.
-    This barrier is simple reusable.
-    """
-
-    def __init__(self, thread_count):
-        """Event barrier initialization:
-         all_thread_count - the number of threads used in the program
-         count - the number of waiting threads in event
-         mutex - synchronization tool to make the critical area atomically executed
-         event - synchronization tool to management threads
-
-        :param thread_count: the number of threads used in the program
-        """
-        self.all_thread_count = thread_count
-        self.count = 0
-        self.mutex = Mutex()
-        self.event = Event()
-
-    def wait(self):
-        """Waiting until all threads have completed part of the code.
-        Between locked mutex is code automatically executed.
-        The event method wait() blocks all threads, which invoke it, until method signal() happened.
-        The event method clear() activates wait().
-
-        :rtype: None
-        """
-        self.mutex.lock()
-        if self.count == 0:
-            self.event.clear()
-        self.count += 1
-        if self.count == self.all_thread_count:
-            self.count = 0
-            self.event.signal()
-        self.mutex.unlock()
-        self.event.wait()
-
-
-class EventBarrier2:
-    """"A barrier for waiting for all threads to complete the part of code. It uses event.
     In this implemented class are needed two instances of class for reuse barrier.
     """
 
@@ -120,6 +82,44 @@ class EventBarrier2:
         self.mutex.unlock()
 
 
+class EventBarrier2:
+    """"A barrier for waiting for all threads to complete the part of code. It uses event.
+    This barrier is simple reusable.
+    """
+
+    def __init__(self, thread_count):
+        """Event barrier initialization:
+         all_thread_count - the number of threads used in the program
+         count - the number of waiting threads in event
+         mutex - synchronization tool to make the critical area atomically executed
+         event - synchronization tool to management threads
+
+        :param thread_count: the number of threads used in the program
+        """
+        self.all_thread_count = thread_count
+        self.count = 0
+        self.mutex = Mutex()
+        self.event = Event()
+
+    def wait(self):
+        """Waiting until all threads have completed part of the code.
+        Between locked mutex is code automatically executed.
+        The event method wait() blocks all threads, which invoke it, until method signal() happened.
+        The event method clear() activates wait().
+
+        :rtype: None
+        """
+        self.mutex.lock()
+        if self.count == 0:
+            self.event.clear()
+        self.count += 1
+        if self.count == self.all_thread_count:
+            self.count = 0
+            self.event.signal()
+        self.mutex.unlock()
+        self.event.wait()
+
+
 def rendezvous(thread_name):
     """ Every threads print 'rendezvous' competitive with their name (with id)
         The print() method from fei.ppds is run synchronously
@@ -144,33 +144,15 @@ def ko(thread_name):
     sleep(randint(1, 10) / 10)
 
 
-def use_barrier(barrier, thread_name):
-    """All threads executing this function. Each of thread print the sentence before barrier with id.
-    Barrier waits for all threads. Each of thread print the sentence after barrier with id.
-    Barrier again waits for all threads. This is executed in the cycle.
-    -It uses event as barrier.
-
-    :param barrier: Instance of EventBarrier
-    :param thread_name: Name of thread with id
-
-    :rtype: None
-    """
-    while True:
-        rendezvous(thread_name)
-        barrier.wait()
-        ko(thread_name)
-        barrier.wait()
-
-
 def use_two_barriers(barrier_1, barrier_2, thread_name):
     """All threads executing this function. Each of thread print the sentence before first barrier with id.
     First barrier waits for all threads. Each of thread print the sentence after barrier with id.
     Second barrier waits for all threads. This is executed in the cycle.
     -If barrier_1 and barrier_2 are instance of TurnstileBarrier, it uses turnstile as barrier.
-    -If barrier_1 and barrier_2 are instance of EventBarrier2, it uses event as barrier.
+    -If barrier_1 and barrier_2 are instance of EventBarrier, it uses event as barrier.
 
-    :param barrier_1: Instance of TurnstileBarrier or EventBarrier2
-    :param barrier_2: Instance of TurnstileBarrier or EventBarrier2
+    :param barrier_1: Instance of TurnstileBarrier or EventBarrier
+    :param barrier_2: Instance of TurnstileBarrier or EventBarrier
     :param thread_name: Name of thread with id
 
     :rtype: None
@@ -180,6 +162,24 @@ def use_two_barriers(barrier_1, barrier_2, thread_name):
         barrier_1.wait()
         ko(thread_name)
         barrier_2.wait()
+
+
+def use_barrier(barrier, thread_name):
+    """All threads executing this function. Each of thread print the sentence before barrier with id.
+    Barrier waits for all threads. Each of thread print the sentence after barrier with id.
+    Barrier again waits for all threads. This is executed in the cycle.
+    -It uses event as barrier.
+
+    :param barrier: Instance of EventBarrier2
+    :param thread_name: Name of thread with id
+
+    :rtype: None
+    """
+    while True:
+        rendezvous(thread_name)
+        barrier.wait()
+        ko(thread_name)
+        barrier.wait()
 
 
 def first_variation(thread_count):
@@ -203,8 +203,9 @@ def second_variation(thread_count):
     :rtype: None
     """
 
-    eb = EventBarrier(thread_count)
-    threads = [Thread(use_barrier, eb, 'Thread %d' % i) for i in range(thread_count)]
+    eb_1 = EventBarrier(thread_count)
+    eb_2 = EventBarrier(thread_count)
+    threads = [Thread(use_two_barriers, eb_1, eb_2, 'Thread %d' % i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
@@ -216,9 +217,8 @@ def third_variation(thread_count):
     :rtype: None
     """
 
-    eb_1 = EventBarrier2(thread_count)
-    eb_2 = EventBarrier2(thread_count)
-    threads = [Thread(use_two_barriers, eb_1, eb_2, 'Thread %d' % i) for i in range(thread_count)]
+    eb = EventBarrier2(thread_count)
+    threads = [Thread(use_barrier, eb, 'Thread %d' % i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
