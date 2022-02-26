@@ -8,6 +8,7 @@ from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 class TurnstileBarrier:
     """"A barrier for waiting for all threads to complete the part of code. It uses turnstile.
+    In this implemented class are needed two instances of class for reuse barrier.
     """
 
     def __init__(self, thread_count):
@@ -27,7 +28,7 @@ class TurnstileBarrier:
     def wait(self):
         """Waiting until all threads have completed part of the code.
         Between locked mutex is code automatically executed.
-        The turnstile method wait() blocks all threads and releases n threads after method signal(n)
+        The turnstile method wait() blocks all threads and releases n threads after method signal(n).
 
         :rtype: None
         """
@@ -42,6 +43,7 @@ class TurnstileBarrier:
 
 class EventBarrier:
     """"A barrier for waiting for all threads to complete the part of code. It uses event.
+    This barrier is simple reusable.
     """
 
     def __init__(self, thread_count):
@@ -78,22 +80,37 @@ class EventBarrier:
 
 
 def rendezvous(thread_name):
+    """ Every threads print 'rendezvous' competitive with their name (with id)
+        The print() method from fei.ppds is run synchronously
+
+    :param thread_name: Name of thread with id
+
+    :rtype: None
+    """
     sleep(randint(1, 10) / 10)
     print('rendezvous: %s' % thread_name)
 
 
 def ko(thread_name):
+    """ Every threads print 'ko' competitive with their name (with id)
+        The print() method from fei.ppds is run synchronously
+
+    :param thread_name: Name of thread with id
+
+    :rtype: None
+    """
     print('ko: %s' % thread_name)
     sleep(randint(1, 10) / 10)
 
 
 def use_barrier(barrier, thread_name):
     """All threads executing this function. Each of thread print the sentence before barrier with id.
-    Barrier waits for all threads. Each of thread print the sentence after barrier with id in the loop.
+    Barrier waits for all threads. Each of thread print the sentence after barrier with id.
+    Barrier again waits for all threads. This is executed in the cycle.
     -It uses event as barrier.
 
     :param barrier: Instance of EventBarrier
-    :param thread_name: Id of thread
+    :param thread_name: Name of thread with id
 
     :rtype: None
     """
@@ -105,6 +122,18 @@ def use_barrier(barrier, thread_name):
 
 
 def use_two_barriers(barrier_1, barrier_2, thread_name):
+    """All threads executing this function. Each of thread print the sentence before first barrier with id.
+    First barrier waits for all threads. Each of thread print the sentence after barrier with id.
+    Second barrier waits for all threads. This is executed in the cycle.
+    -If barrier_1 and barrier_2 are instance of TurnstileBarrier, it uses turnstile as barrier.
+    -If barrier_1 and barrier_2 are instance of EventBarrier2, it uses event as barrier.
+
+    :param barrier_1: Instance of TurnstileBarrier or EventBarrier2
+    :param barrier_2: Instance of TurnstileBarrier or EventBarrier2
+    :param thread_name: Name of thread with id
+
+    :rtype: None
+    """
     while True:
         rendezvous(thread_name)
         barrier_1.wait()
