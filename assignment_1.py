@@ -1,6 +1,8 @@
 """"Author: Katarína Stasová
     Program uses a simple barrier to execute a part of code with all threads before the next
     part of code start to execute. """
+from random import randint
+from time import sleep
 from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
@@ -81,6 +83,7 @@ def use_barrier(barrier, thread_id):
 
     :rtype: None
     """
+    sleep(randint(1, 10) / 10)
     print("Thread %d before barrier" % thread_id)
     barrier.wait()
     print("Thread %d after barrier" % thread_id)
