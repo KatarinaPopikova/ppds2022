@@ -4,12 +4,12 @@
 from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
-class SimpleBarrier:
+class TurnstileSimpleBarrier:
     """"A simple barrier for waiting for all threads to complete the part of code. It uses turnstile.
     """
 
     def __init__(self, thread_count):
-        """Simple barrier initialization:
+        """Turnstile simple barrier initialization:
          all_thread_count - the number of threads used in the program
          count - the number of waiting threads in turnstile
          mutex - synchronization tool to make the critical area atomically executed
@@ -32,7 +32,6 @@ class SimpleBarrier:
         self.mutex.lock()
         self.count += 1
         if self.count == self.all_thread_count:
-            self.count = 0
             self.turnstile.signal(self.all_thread_count)
         self.mutex.unlock()
         self.turnstile.wait()
@@ -43,7 +42,7 @@ class EventSimpleBarrier:
     """
 
     def __init__(self, thread_count):
-        """Simple barrier initialization:
+        """Event simple barrier initialization:
          all_thread_count - the number of threads used in the program
          count - the number of waiting threads in event
          mutex - synchronization tool to make the critical area atomically executed
@@ -66,7 +65,6 @@ class EventSimpleBarrier:
         self.mutex.lock()
         self.count += 1
         if self.count == self.all_thread_count:
-            self.count = 0
             self.event.signal()
         self.mutex.unlock()
         self.event.wait()
@@ -75,9 +73,10 @@ class EventSimpleBarrier:
 def use_barrier(barrier, thread_id):
     """All threads executing this function. Each of thread print the sentence before barrier with id.
     Barrier waits for all threads. Each of thread print the sentence after barrier with id.
-    This function uses turnstile as barrier.
+    -If barrier is instance of TurnstileSimpleBarrier, it uses turnstile as barrier.
+    -If barrier is instance of EventSimpleBarrier, it uses event as barrier.
 
-    :param barrier: Instance of SimpleBarrier
+    :param barrier: Instance of TurnstileSimpleBarrier or EventSimpleBarrier
     :param thread_id: Id of thread
 
     :rtype: None
@@ -88,30 +87,15 @@ def use_barrier(barrier, thread_id):
 
 
 def first_variation(thread_count):
-    """Create threads to execute program with using simple barrier
+    """Create threads to execute program with using turnstile
 
     :param thread_count: the number of threads used in the program
 
     :rtype: None
     """
-    sb = SimpleBarrier(thread_count)
+    sb = TurnstileSimpleBarrier(thread_count)
     threads = [Thread(use_barrier, sb, i) for i in range(thread_count)]
     [t.join() for t in threads]
-
-
-def use_event(event, thread_id):
-    """All threads executing this function. Each of thread print the sentence before barrier with id.
-    Barrier waits for all threads. Each of thread print the sentence after barrier with id.
-    This function uses event as barrier.
-
-    :param event: used for event synchronization
-    :param thread_id: Id of thread
-
-    :rtype: None
-    """
-    print("Thread %d before barrier" % thread_id)
-    event.wait()
-    print("Thread %d after barrier" % thread_id)
 
 
 def second_variation(thread_count):
@@ -123,7 +107,7 @@ def second_variation(thread_count):
     """
 
     eb = EventSimpleBarrier(thread_count)
-    threads = [Thread(use_event, eb, i) for i in range(thread_count)]
+    threads = [Thread(use_barrier, eb, i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
