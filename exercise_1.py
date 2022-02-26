@@ -38,6 +38,24 @@ class SimpleBarrier:
         self.turnstile.wait()
 
 
+class EventSimpleBarrier:
+
+    def __init__(self, thread_count):
+        self.all_thread_count = thread_count
+        self.count = 0
+        self.mutex = Mutex()
+        self.event = Event()
+
+    def wait(self):
+        self.mutex.lock()
+        self.count += 1
+        if self.count == self.all_thread_count:
+            self.count = 0
+            self.event.signal()
+        self.mutex.unlock()
+        self.event.wait()
+
+
 def use_barrier(barrier, thread_id):
     """All threads executing this function. Each of thread print the sentence before barrier with id.
     Barrier waits for all threads. Each of thread print the sentence after barrier with id.
@@ -53,10 +71,6 @@ def use_barrier(barrier, thread_id):
 
 
 def first_variation(thread_count):
-    """Create threads to execute program with using simple barrier
-
-    :param thread_count: the number of threads used in the program
-    """
     sb = SimpleBarrier(thread_count)
     threads = [Thread(use_barrier, sb, i) for i in range(thread_count)]
     [t.join() for t in threads]
@@ -64,17 +78,17 @@ def first_variation(thread_count):
 
 def use_event(event, thread_id):
     print("Thread %d before barrier" % thread_id)
-    event.wait()  # TODO
+    event.wait()
     print("Thread %d after barrier" % thread_id)
 
 
 def second_variation(thread_count):
-    event = Event
-    threads = [Thread(use_event, event, i) for i in range(thread_count)]
+    eb = EventSimpleBarrier(thread_count)
+    threads = [Thread(use_event, eb, i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
 if __name__ == '__main__':
     thread_count = 5
-    first_variation(thread_count)
+    # first_variation(thread_count)
     second_variation(thread_count)
