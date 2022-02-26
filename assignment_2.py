@@ -1,6 +1,8 @@
 """"Author: Katarína Stasová
     Program uses a simple barrier to execute a part of code with all threads before the next
     part of code start to execute. """
+from time import sleep
+from random import randint
 from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
@@ -75,28 +77,38 @@ class EventBarrier:
         self.event.wait()
 
 
-def use_barrier(barrier, thread_id):
+def rendezvous(thread_name):
+    sleep(randint(1, 10) / 10)
+    print('rendezvous: %s' % thread_name)
+
+
+def ko(thread_name):
+    print('ko: %s' % thread_name)
+    sleep(randint(1, 10) / 10)
+
+
+def use_barrier(barrier, thread_name):
     """All threads executing this function. Each of thread print the sentence before barrier with id.
     Barrier waits for all threads. Each of thread print the sentence after barrier with id in the loop.
     -It uses event as barrier.
 
     :param barrier: Instance of EventBarrier
-    :param thread_id: Id of thread
+    :param thread_name: Id of thread
 
     :rtype: None
     """
     while True:
-        print("Thread %d before barrier" % thread_id)
+        rendezvous(thread_name)
         barrier.wait()
-        print("Thread %d after barrier" % thread_id)
+        ko(thread_name)
         barrier.wait()
 
 
-def use_two_barriers(barrier_1, barrier_2, thread_id):
+def use_two_barriers(barrier_1, barrier_2, thread_name):
     while True:
-        print("Thread %d before barrier" % thread_id)
+        rendezvous(thread_name)
         barrier_1.wait()
-        print("Thread %d after barrier" % thread_id)
+        ko(thread_name)
         barrier_2.wait()
 
 
@@ -109,7 +121,7 @@ def first_variation(thread_count):
     """
     tb_1 = TurnstileBarrier(thread_count)
     tb_2 = TurnstileBarrier(thread_count)
-    threads = [Thread(use_two_barriers, tb_1, tb_2, i) for i in range(thread_count)]
+    threads = [Thread(use_two_barriers, tb_1, tb_2, 'Thread %d' % i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
@@ -122,11 +134,11 @@ def second_variation(thread_count):
     """
 
     eb = EventBarrier(thread_count)
-    threads = [Thread(use_barrier, eb, i) for i in range(thread_count)]
+    threads = [Thread(use_barrier, eb, 'Thread %d' % i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
 if __name__ == '__main__':
     thread_count = 5
-    first_variation(thread_count)
-    # second_variation(thread_count)
+    # first_variation(thread_count)
+    second_variation(thread_count)
