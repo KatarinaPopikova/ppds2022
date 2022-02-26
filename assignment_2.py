@@ -4,7 +4,7 @@
 from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
-class TurnstileSimpleBarrier:
+class TurnstileBarrier:
     """"A barrier for waiting for all threads to complete the part of code. It uses turnstile.
     """
 
@@ -38,7 +38,7 @@ class TurnstileSimpleBarrier:
         self.turnstile.wait()
 
 
-class EventSimpleBarrier:
+class EventBarrier:
     """"A barrier for waiting for all threads to complete the part of code. It uses event.
     """
 
@@ -92,7 +92,7 @@ def use_barrier(barrier, thread_id):
         barrier.wait()
 
 
-def use_two_barrier(barrier_1, barrier_2, thread_id):
+def use_two_barriers(barrier_1, barrier_2, thread_id):
     while True:
         print("Thread %d before barrier" % thread_id)
         barrier_1.wait()
@@ -107,9 +107,9 @@ def first_variation(thread_count):
 
     :rtype: None
     """
-    tb_1 = TurnstileSimpleBarrier(thread_count)
-    tb_2 = TurnstileSimpleBarrier(thread_count)
-    threads = [Thread(use_two_barrier, tb_1, tb_2, i) for i in range(thread_count)]
+    tb_1 = TurnstileBarrier(thread_count)
+    tb_2 = TurnstileBarrier(thread_count)
+    threads = [Thread(use_two_barriers, tb_1, tb_2, i) for i in range(thread_count)]
     [t.join() for t in threads]
 
 
@@ -121,7 +121,7 @@ def second_variation(thread_count):
     :rtype: None
     """
 
-    eb = EventSimpleBarrier(thread_count)
+    eb = EventBarrier(thread_count)
     threads = [Thread(use_barrier, eb, i) for i in range(thread_count)]
     [t.join() for t in threads]
 
