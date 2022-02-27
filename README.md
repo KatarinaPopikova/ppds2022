@@ -20,7 +20,8 @@ Implement ADT SimpleBarrier according to specifications from the lecture. First 
 synchronization as it was explained in the lecture. After successful implementation in this way, try to use event
 signaling to implement the turnstile.  
 Program creates 5 threads that execute the function. This function prints sentences (using function 'print' from
-module 'ppds') with meaning "Before barrier" and "After barrier" between implemented barrier.
+module 'ppds', which using lock for a comprehensive print) with meaning "Before barrier" and "After barrier" between
+implemented barrier.
 
 **Solution**:
 Five threads print sentence before barrier with theirs id. They wait for all threads to complete this part of the code
@@ -58,3 +59,12 @@ used.
 
 - event barrier implementation  
   ![barrier implementation](images/img_3.png)
+
+**Assignment 2**
+Use the same principle as in assignment 1, but the print is executed in a loop. Therefore, a reusable barrier needs to
+be reprogrammed.
+
+- body of `use_barrier`  
+  ![use_barrier body](images/img_4.png)
+
+Each of thread have to executed `rendezvous()`, subsequently `ko()` and it is executed in the loop.
