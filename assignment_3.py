@@ -77,15 +77,31 @@ def compute_fibonacci_without_barrier(f_i, fib_seq, i):
     mutex.unlock()
 
 
+def first_variation(fib_seq, threads_count):
+    f_i = FibonacciIndex()
+    threads = [Thread(compute_fibonacci_without_barrier, f_i, fib_seq, i) for i in range(threads_count)]
+    [t.join() for t in threads]
+
+
+def second_variation(fib_seq, threads_count):
+    barrier1 = TurnstileBarrier(threads_count)
+    barrier2 = TurnstileBarrier(threads_count)
+    threads = [Thread(compute_fibonacci, barrier1, barrier2, fib_seq, i) for i in range(threads_count)]
+    [t.join() for t in threads]
+
+
+def third_variation(fib_seq, threads_count):
+    barrier1 = EventBarrier(threads_count)
+    barrier2 = EventBarrier(threads_count)
+    threads = [Thread(compute_fibonacci, barrier1, barrier2, fib_seq, i) for i in range(threads_count)]
+    [t.join() for t in threads]
+
+
 if __name__ == '__main__':
-    THREADS = 5
+    THREADS = 15
     fib_seq = [0] * (THREADS + 2)
     fib_seq[1] = 1
-    # f_i = FibonacciIndex()
-    # threads = [Thread(compute_fibonacci_without_barrier, f_i, fib_seq, i) for i in range(THREADS)]
-
-    barrier1 = TurnstileBarrier(THREADS)
-    barrier2 = TurnstileBarrier(THREADS)
-    threads = [Thread(compute_fibonacci, barrier1, barrier2, fib_seq, i) for i in range(THREADS)]
-    [t.join() for t in threads]
+    first_variation(fib_seq, THREADS)
+    second_variation(fib_seq, THREADS)
+    third_variation(fib_seq, THREADS)
     print(fib_seq)
