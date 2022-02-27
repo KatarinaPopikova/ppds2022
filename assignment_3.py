@@ -42,6 +42,35 @@ class TurnstileBarrier:
             self.turnstile.signal(self.all_thread_count)
 
 
+class EventBarrier:
+    def __init__(self, thread_count):
+        self.all_thread_count = thread_count
+        self.count = 0
+        self.mutex = Mutex()
+        self.event = Event()
+
+    def wait(self):
+        self.mutex.lock()
+        if self.count == 0:
+            self.event.clear()
+        self.count += 1
+        self.check_signal()
+        self.mutex.unlock()
+        self.event.wait()
+
+    def get_all_thread_count(self):
+        return self.all_thread_count
+
+    def set_all_thread_count(self):
+        self.all_thread_count -= 1
+        self.check_signal()
+
+    def check_signal(self):
+        if self.count == self.all_thread_count:
+            self.count = 0
+            self.event.signal()
+
+
 def compute_fibonacci(barrier1, barrier2, fib_seq, i):
     mutex = Mutex()
     while True:
