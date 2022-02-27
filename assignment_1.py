@@ -74,7 +74,7 @@ class EventSimpleBarrier:
 
 def use_barrier(barrier, thread_id):
     """All threads executing this function. Each of thread print the sentence before barrier with id.
-    Barrier waits for all threads. Each of thread print the sentence after barrier with id.
+    Barrier waits for all threads. Each of thread prints the sentence after barrier with id.
     -If barrier is instance of TurnstileSimpleBarrier, it uses turnstile as barrier.
     -If barrier is instance of EventSimpleBarrier, it uses event as barrier.
 
