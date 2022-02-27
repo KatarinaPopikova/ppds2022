@@ -75,16 +75,15 @@ cycle.
   ![program output](images/img_5.png)
 
 Each of thread has to executed `rendezvous()`, subsequently `ko()` and it is executed in the loop.  
-For expected output there are three variations implemented in the file "assignment_2":
+For expected output there are two variations implemented in the file "assignment_2":
 
 - used two instances of the class `TurnstileBarrier`- using turnstile
 - used two instances of the class `EventBarrier`- using event
-- used only one instance of the class `EventBarrier2`- using event
 
 *Variation_1*:
 In the method `first_variation()` are initialized two instances of the class `TurnstileBarrier` and created the value
-of `thread_count` (5) threads. Threads call `use_two_barriers`, which differs from `use_barrier`, because in this
-variation is needed 2 different barriers (two turnstiles).
+of `thread_count` (5) threads. Threads call `use_two_barriers`, which differs from `use_barrier` (from previous screen),
+because in this variation is needed 2 different barriers (two turnstiles).
 
 - body of `use_two_barrier`  
   ![use_barrier body](images/img_6.png)
@@ -114,10 +113,3 @@ thread will be waited for, so parallelism will be preserved.
 
 - event barrier implementation  
   ![barrier implementation](images/img_8.png)
-
-*Variation_3*:
-In this variation is program implemented to use only one instance of the `EventBarrier2` class. Now is
-used `use_barrier()` method. So 
-
-- event barrier implementation  
-  ![barrier implementation](images/img_9.png)
