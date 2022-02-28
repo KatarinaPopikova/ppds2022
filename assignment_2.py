@@ -1,5 +1,5 @@
 """"Author: Katarína Stasová
-    Program uses a simple barrier to execute a part of code with all threads before the next
+    Program uses a reusable barrier to execute a part of code with all threads before the next
     part of code start to execute. """
 from time import sleep
 from random import randint
@@ -7,7 +7,7 @@ from fei.ppds import Thread, Semaphore, Mutex, print, Event
 
 
 class TurnstileBarrier:
-    """"A barrier for waiting for all threads to complete the part of code. It uses turnstile.
+    """"A reusable barrier for waiting for all threads to complete the part of code. It uses turnstile.
     In this implemented class are needed two instances of class for reuse barrier.
     """
 
@@ -42,7 +42,7 @@ class TurnstileBarrier:
 
 
 class EventBarrier:
-    """"A barrier for waiting for all threads to complete the part of code. It uses event.
+    """"A reusable barrier for waiting for all threads to complete the part of code. It uses event.
     In this implemented class are needed two instances of class for reuse barrier.
     """
 

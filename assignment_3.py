@@ -29,7 +29,7 @@ class FibonacciIndex:
 
 
 class TurnstileBarrier:
-    """"A barrier that waiting for all threads to complete the part of code. It uses turnstile.
+    """"A reusable barrier that waiting for all threads to complete the part of code. It uses turnstile.
     In this implemented class are needed two instances of class for reuse barrier.
     """
 
@@ -87,7 +87,7 @@ class TurnstileBarrier:
 
 
 class EventBarrier:
-    """"A barrier that waiting for all threads to complete the part of code. It uses event.
+    """"A reusable barrier that waiting for all threads to complete the part of code. It uses event.
     In this implemented class are needed two instances of class for reuse barrier.
     """
 
@@ -242,7 +242,7 @@ def third_variation(fib_seq, threads_count):
 
 
 if __name__ == '__main__':
-    THREADS = 15
+    THREADS = 5
     fib_seq = [0] * (THREADS + 2)
     fib_seq[1] = 1
     first_variation(fib_seq, THREADS)
