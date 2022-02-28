@@ -113,3 +113,58 @@ thread will be waited for, so parallelism will be preserved.
 
 - event barrier implementation  
   ![barrier implementation](images/img_8.png)
+
+**Assignment 2**
+Create N threads. Let `i` represent a node in which the element at position `i + 2` of the Fibonacci sequence (0, 1, 1,
+2, 3, 5, 8, 13, 21…) is calculated. All threads share a common array in which the calculated sequence elements are
+stored sequentially- during the calculation. First two elements are 0 and 1 initialized at the beginning. Use the
+synchronization tools. Make synchronization to thread `i + 2` can calculate his Fibonacci number when previous sequence
+numbers are calculated (after the `i` and `i + 1` threads).
+
+**Solution**:
+Implementation is possible in various ways. The most important thing is that the Fibonacci should be counted
+sequentially and the threads should follow each other. If we tried to use as few synchronization objects as possible, we
+managed to come up with a solution using one Mutex. (But the classmate shows me the solution without synchronization
+objects. When thread controls in the loop, if at index `i + 1` (one before that thread should calculate) is not null, it
+can calculate `i + 2`. In the loop the threads can switch. So no synchronization objects are needed.).  
+We should also try to implement to the program, when turnstiles or events are used without. When we can switch them
+without interfering with the application logic of the program. For this implemented variation of solution are needed two
+barriers.
+
+-filling fibonacci sequence
+![barrier implementation](images/img_9.png)
+
+- output  
+  ![program output](images/img_10.png)
+
+There are three variations implemented in the file "assignment_3":
+
+- used instance of Mutex
+- used two barriers (instances of the class `TurnstileBarrier`- using turnstile)
+- used two barriers (instances of the class `EventBarrier`- using event)
+-
+
+*Variation_1*:
+Compute fibonacci using mutex as synchronization object. In the loop is looking for the right thread, which can continue
+to fill the array for the Fibonacci sequence. All is executing under lock, and unlock is used after filled value to
+array or when the thread is not right at the moment for filling, and it is better to release the lock to another thread.
+
+- body of `compute_fibonacci_without_barrier`  
+  ![use_barrier body](images/img_11.png)
+
+*Variation_2*:
+Very similar idea as variation_1. But if there should be used barriers with turnstile, the `TurnstileBarrier` class
+from "Assignment 2" was reprogrammed to this program. So all threads are blocked at the beginning of the
+method `compute_fibonacci` to start executing "together". In the loop is detecting if the thread under lock is that,
+which are looked for to calculate the fibonacci sequence. If it is true, thread break his loop, calculate and decrease
+the number of threads, which the barrier has to wait (and there are used two barriers, so in both barriers it is
+decreases). At the end is the lock released. If the thread has incorrect id- when is not necessary, the lock is released
+and the second barrier is used.     
+In the `TurnstileBarrier` class have been added methods - to return the count of threads, that not executed fibonacci
+and the method to decreases count of threads, when some thread executed fibonacci counting and is no longer needed for
+counting. In second method is necessary to check, if this thread should not invoke signal.  
+
+- body of `compute_fibonacci`  
+  ![use_barrier body](images/img_12.png)
+
+*Variation_3*:
