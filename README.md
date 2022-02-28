@@ -142,7 +142,7 @@ There are three variations implemented in the file "assignment_3":
 - used instance of Mutex
 - used two barriers (instances of the class `TurnstileBarrier`- using turnstile)
 - used two barriers (instances of the class `EventBarrier`- using event)
--
+
 
 *Variation_1*:
 Compute fibonacci using mutex as synchronization object. In the loop is looking for the right thread, which can continue
