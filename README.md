@@ -143,7 +143,6 @@ There are three variations implemented in the file "assignment_3":
 - used two barriers (instances of the class `TurnstileBarrier`- using turnstile)
 - used two barriers (instances of the class `EventBarrier`- using event)
 
-
 *Variation_1*:
 Compute fibonacci using mutex as synchronization object. In the loop is looking for the right thread, which can continue
 to fill the array for the Fibonacci sequence. All is executing under lock, and unlock is used after filled value to
@@ -171,8 +170,8 @@ counting. In second method is necessary to check, if this thread should not invo
 
 *Variation_3*:
 Almost everything is the same as in variation_2. But when we use the Event, the signal method deactivates blocking the
-threads and needs to be reactivates. For simplicity, the `wait()`  method of the `EventBarrier` class has also been
-modified to a signal can be called without worry.
+threads and blocking method needs to be reactivates. For simplicity, the `wait()`  method of the `EventBarrier` class
+was also modified to a signal can be called without worry.
 
 - event barrier implementation  
   ![use_barrier body](images/img_12.png)
