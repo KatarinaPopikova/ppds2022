@@ -1,71 +1,69 @@
+""""Author: Katarína Stasová
+    Program for simulation in warehouse. Producers produce and add items to warehouse and consumers gaining
+    them and producing. """
 from random import randint
 from time import sleep
 from fei.ppds import Thread, Semaphore, Mutex, print
 
 
-class LS(object):
-    def __init__(self):
-        self.cnt = 0
-        self.mutex = Mutex()
-
-    def lock(self, sem):
-        self.mutex.lock()
-        if not self.cnt:
-            sem.wait()
-        self.cnt += 1
-        self.mutex.unlock()
-
-    def unlock(self, sem):
-        self.mutex.lock()
-        self.cnt -= 1
-        if not self.cnt:
-            sem.signal()
-        self.mutex.unlock()
-
-
 class Shared(object):
-    def __init__(self, N):
+    """Shared class for all threads"""
+
+    def __init__(self, thread_count):
+        """initialization of:
+        -simulation finishing = finished
+        -synchronization object to maintain data integrity = mutex
+        -free space in the warehouse as free
+        -empty warehouse as items (semaphore set to 0)
+
+        :param thread_count: count of threads
+        """
         self.finished = False
         self.mutex = Mutex()
-        self.free = Semaphore(N)
+        self.free = Semaphore(thread_count)
         self.items = Semaphore(0)
 
 
 def producer(shared):
+    """ Simulation of warehouse by the producer.
+    Produce products and storage products when no consumer is in a warehouse.
+
+    :param shared:
+    """
     while True:
         # production
         sleep(randint(1, 10) / 10)
-        # warehouse vacancy check
         shared.free.wait()
         if shared.finished:
             break
-        # gaining access to the warehouse
         shared.mutex.lock()
         # storage of the product in the warehouse
         sleep(randint(1, 10) / 100)
-        # leaving the warehouse
         shared.mutex.unlock()
-        # increase in the number of stocks in the warehouse
         shared.items.signal()
 
 
 def consumer(shared):
+    """ Simulation of warehouse by the consumer.
+    Gaining products when no producer is in a warehouse.
+
+    :param shared:
+    """
     while True:
-        # checking the number of stocks in the warehouse
         shared.items.wait()
         if shared.finished:
             break
-        # gaining access to the warehouse
         shared.mutex.lock()
         # gaining the product from the warehouse
         sleep(randint(1, 10) / 100)
-        # leaving the warehouse
         shared.mutex.unlock()
+        shared.free.signal()
         # product processing
         sleep(randint(1, 10) / 10)
 
 
 if __name__ == '__main__':
+    """ Create threads for consumers and producers."""
     for i in range(10):
         s = Shared(10)
         c = [Thread(consumer, s) for _ in range(2)]
