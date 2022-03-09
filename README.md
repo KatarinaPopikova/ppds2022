@@ -1,2 +1,5 @@
 # ppds2022
-Paralelné programovanie a distribuované systémy
+
+Full subject name:  
+**Slovak:** Paralelné programovanie a distribuované systémy  
+**English:** Parallel programming and distributed systems
