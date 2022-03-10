@@ -1,4 +1,5 @@
 """"Author: Katarína Stasová
+    License: MIT
     Program for simulation in warehouse. Producers produce and add items to warehouse and consumers gaining
     them and producing. """
 from random import randint
@@ -6,7 +7,7 @@ from time import sleep
 
 import numpy
 from fei.ppds import Thread, Semaphore, Mutex
-from matplotlib import pyplot as plt, cm, print
+from matplotlib import pyplot as plt, cm
 
 
 class Shared(object):
@@ -18,6 +19,7 @@ class Shared(object):
         -synchronization object to maintain data integrity = mutex
         -free space in the warehouse as free
         -empty warehouse as items (semaphore set to 0)
+        -produced_items in one cycle
 
         :param thread_count: count of threads
         """
@@ -32,7 +34,8 @@ def producer(shared, prod_time):
     """ Simulation of warehouse by the producer.
     Produce products and storage products when no consumer is in a warehouse.
 
-    :param shared:
+    :param prod_time: duration of one item production
+    :param shared: shared class for all threads
     """
     while True:
         # production
@@ -52,7 +55,7 @@ def consumer(shared):
     """ Simulation of warehouse by the consumer.
     Gaining products when no producer is in a warehouse.
 
-    :param shared:
+    :param shared: shared class for all threads
     """
     while True:
         shared.items.wait()
@@ -68,6 +71,12 @@ def consumer(shared):
 
 
 def create_graph(production_time, producers, produced_items):
+    """ Create 3D graph
+
+    :param production_time: count of durations of one item production in each cycle
+    :param producers: count of producers in each cycle
+    :param produced_items: average of produced items
+    """
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
     x, y = numpy.meshgrid(production_time, producers)
@@ -82,7 +91,10 @@ def create_graph(production_time, producers, produced_items):
 
 
 if __name__ == '__main__':
-    """ Create threads for consumers and producers.
+    """ Create list of times for production of 10 values.
+    Create list of count of producers of 10 values.
+    Combine them in 10 replicates and find the average.
+    Create threads as consumers and producers.
     """
     produced_items = []
     production_time = list(map(lambda x: x / 500, range(10, 0, -1)))
