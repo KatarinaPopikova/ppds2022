@@ -67,6 +67,20 @@ def consumer(shared):
         sleep(randint(1, 10) / 100)
 
 
+def create_graph(production_time, producers, produced_items):
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+    x, y = numpy.meshgrid(production_time, producers)
+    z = numpy.array(produced_items)
+    ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+
+    ax.set_xlabel("production time")
+    ax.set_ylabel("producers")
+    ax.set_zlabel("produced items")
+
+    plt.show()
+
+
 if __name__ == '__main__':
     """ Create threads for consumers and producers.
     """
@@ -94,3 +108,4 @@ if __name__ == '__main__':
                 produced_items_sum += s.produced_items
             produced_items[-1].append(produced_items_sum / 10)
 
+    create_graph(production_time, producers, produced_items)
