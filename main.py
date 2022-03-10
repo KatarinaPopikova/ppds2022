@@ -3,7 +3,10 @@
     them and producing. """
 from random import randint
 from time import sleep
-from fei.ppds import Thread, Semaphore, Mutex, print
+
+import numpy
+from fei.ppds import Thread, Semaphore, Mutex
+from matplotlib import pyplot as plt, cm, print
 
 
 class Shared(object):
@@ -22,9 +25,10 @@ class Shared(object):
         self.mutex = Mutex()
         self.free = Semaphore(thread_count)
         self.items = Semaphore(0)
+        self.produced_items = 0
 
 
-def producer(shared):
+def producer(shared, prod_time):
     """ Simulation of warehouse by the producer.
     Produce products and storage products when no consumer is in a warehouse.
 
@@ -32,13 +36,14 @@ def producer(shared):
     """
     while True:
         # production
-        sleep(randint(1, 10) / 10)
+        sleep(prod_time)
         shared.free.wait()
         if shared.finished:
             break
         shared.mutex.lock()
+        shared.produced_items += 1
         # storage of the product in the warehouse
-        sleep(randint(1, 10) / 100)
+        sleep(randint(1, 10) / 1000)
         shared.mutex.unlock()
         shared.items.signal()
 
@@ -55,24 +60,37 @@ def consumer(shared):
             break
         shared.mutex.lock()
         # gaining the product from the warehouse
-        sleep(randint(1, 10) / 100)
+        sleep(randint(1, 10) / 1000)
         shared.mutex.unlock()
         shared.free.signal()
         # product processing
-        sleep(randint(1, 10) / 10)
+        sleep(randint(1, 10) / 100)
 
 
 if __name__ == '__main__':
-    """ Create threads for consumers and producers."""
-    for i in range(10):
-        s = Shared(10)
-        c = [Thread(consumer, s) for _ in range(2)]
-        p = [Thread(producer, s) for _ in range(5)]
+    """ Create threads for consumers and producers.
+    """
+    produced_items = []
+    production_time = list(map(lambda x: x / 500, range(10, 0, -1)))
+    producers = list(range(5, 15))
 
-        sleep(10)
-        s.finished = True
-        print(f"The main thread {i}: is waiting to be completed")
-        s.items.signal(100)
-        s.free.signal(100)
-        [t.join() for t in c + p]
-        print(f"The main thread {i}: end of program")
+    for time in production_time:
+        produced_items.append([])
+        for prod in producers:
+            produced_items_sum = 0
+            for j in range(10):
+                s = Shared(5)
+                c = [Thread(consumer, s) for _ in range(2)]
+                p = [Thread(producer, s, time) for _ in range(prod)]
+
+                sleep(1)
+                s.finished = True
+
+                # let all threads know about the end
+                s.items.signal(100)
+                s.free.signal(100)
+                [t.join() for t in c + p]
+
+                produced_items_sum += s.produced_items
+            produced_items[-1].append(produced_items_sum / 10)
+
