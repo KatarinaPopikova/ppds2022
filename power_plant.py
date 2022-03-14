@@ -76,6 +76,7 @@ class EventBarrier:
         if self.count == self.all_thread_count:
             self.count = 0
             self.event.signal()
+            self.event.clear()
         last = self.count
         self.mutex.unlock()
 
@@ -101,7 +102,7 @@ class Shared:
         self.ls_monitor = Lightswitch()
         self.ls_sensor = Lightswitch()
         self.access_data = Semaphore(1)
-        self.event = EventBarrier(sensor_count)
+        self.barrier = EventBarrier(sensor_count)
 
 
 def monitor(shared, thread_name):
@@ -119,6 +120,7 @@ def monitor(shared, thread_name):
         shared.turnstile.signal()
         count = shared.ls_monitor.lock(shared.access_data)
         time = randint(4, 5) / 100
+        # simulation of reading data
         sleep(time)
         print('monit "%s": number_of_reading_monitors = %2d,reading_duration = %0.3f' % (thread_name, count, time))
         shared.ls_monitor.unlock(shared.access_data)
@@ -141,13 +143,14 @@ def sensor(shared, thread_name, monitor_count):
         shared.turnstile.signal()
 
         if thread_name == 'H':
-            time = randint(1, 2) / 100
-        else:
             time = randint(20, 25) / 1000
+        else:
+            time = randint(1, 2) / 100
         print('sensor "%s": number_of_writing_sensors = %2d, writing_duration = %0.3f' % (thread_name, count, time))
+        # simulation of writing data
         sleep(time)
         shared.ls_sensor.unlock(shared.access_data)
-        shared.event.wait()
+        shared.barrier.wait()
         shared.valid_data.signal(monitor_count)
 
 
