@@ -1,15 +1,33 @@
-""""Author: Katarína Stasová
-    License: MIT
-    Program of savage problem. When agents have an infinite amount of materials, and 3 smokers each have an infinite
-     amount of one different material."""
-
 from random import randint
 from time import sleep
-from fei.ppds import Thread, Mutex, Semaphore, print
+from fei.ppds import Thread, Mutex, Event, Semaphore, print
 
 N = 10
 M = 3
 S = 5
+
+
+class EventBarrier:
+    def __init__(self, thread_count):
+        self.all_thread_count = thread_count
+        self.count = 0
+        self.mutex = Mutex()
+        self.event = Event()
+
+    def wait(self, m):
+        self.mutex.lock()
+        self.count += 1
+        if self.count == self.all_thread_count:
+            shared.servings += m
+            shared.full_pot.signal()
+            self.count = 0
+            self.event.signal()
+            self.event.clear()
+        last = self.count
+        self.mutex.unlock()
+
+        if last:
+            self.event.wait()
 
 
 class Shared:
@@ -18,6 +36,7 @@ class Shared:
         self.mutex = Mutex()
         self.empty_pot = Semaphore(0)
         self.full_pot = Semaphore(0)
+        self.barrier = EventBarrier(s)
 
 
 def savage(i, shared, s):
@@ -26,11 +45,9 @@ def savage(i, shared, s):
 
         shared.mutex.lock()
         if shared.servings == 0:
-            print(f'savage {i}: empty pot')
             shared.empty_pot.signal(s)
             shared.full_pot.wait()
 
-        print(f'savage {i}: take from pot')
         shared.servings -= 1
         shared.mutex.unlock()
         eat(i)
@@ -42,10 +59,9 @@ def eat(i):
 
 def cook(cooker_id, shared, m):
     while True:
-
         shared.empty_pot.wait()
-        print(f'cooker {cooker_id}: cooking')
         sleep(randint(1, 4) / 10)
+        shared.barrier.wait(m)
 
 
 if __name__ == '__main__':
