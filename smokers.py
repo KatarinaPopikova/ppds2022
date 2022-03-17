@@ -1,7 +1,7 @@
 """"Author: Katarína Stasová
     License: MIT
-    Program for simulation in warehouse. Producers produce and add items to warehouse and consumers gaining
-    them and producing. """
+    Program of smoker problem. When agents have an infinite amount of materials, and 3 smokers each have an infinite
+     amount of one different material."""
 
 from fei.ppds import Thread
 
