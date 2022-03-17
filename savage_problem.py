@@ -75,7 +75,7 @@ class Shared:
 
 
 def savage(i, shared, s):
-    """ Simulation of savages eating. Savage who find out, that the pot is empty wake up chefs. He is waiting untill the
+    """ Simulation of savages eating. Savage who find out, that the pot is empty wake up chefs. He is waiting until the
     pot is full.
 
     :param i: savage id
@@ -107,19 +107,19 @@ def eat(i):
     print(f'savage {i}:eat end')
 
 
-def cook(cooker_id, shared, m):
+def cook(chef_id, shared, m):
     """ Simulation of chefs cooking. When pot is empty, they wake up and start cooking together. The last chef serves
     portions to the pot and savages can continue in eating.
 
-    :param cooker_id: cooker id
+    :param chef_id: chef id
     :param shared: shared class for all threads
     :param m: required number of servings
     """
     while True:
         shared.empty_pot.wait()
-        print(f'cooker {cooker_id}: cooking')
+        print(f'chef {chef_id}: cooking')
         sleep(randint(1, 4) / 10)
-        print(f'cooker {cooker_id}: cook {m} servings --> pot')
+        print(f'chef {chef_id}: cook {m} servings --> pot')
         shared.barrier()
 
 
@@ -132,8 +132,8 @@ if __name__ == '__main__':
         t = Thread(savage, savage_id, shared, S)
         threads.append(t)
 
-    for cooker_id in range(S):
-        t = Thread(cook, cooker_id, shared, M)
+    for chef_id in range(S):
+        t = Thread(cook, chef_id, shared, M)
         threads.append(t)
 
     for t in threads:
