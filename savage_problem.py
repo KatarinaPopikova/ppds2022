@@ -1,3 +1,8 @@
+""""Author: Katarína Stasová
+    License: MIT
+    Program of savage problem. Savages eat from pot and when pot is empty, savage wakes up the cooks. They cook and
+    serve to pot. When pot is full, savages can continue to eat."""
+
 from random import randint
 from time import sleep
 from fei.ppds import Thread, Mutex, Event, Semaphore, print
@@ -67,7 +72,7 @@ def cook(cooker_id, shared, m):
         print(f'cooker {cooker_id}: cooking')
         sleep(randint(1, 4) / 10)
         print(f'cooker {cooker_id}: cook {m} servings --> pot')
-        shared.barrier.wait(m)
+        shared.barrier()
 
 
 if __name__ == '__main__':
