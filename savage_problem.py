@@ -45,22 +45,28 @@ def savage(i, shared, s):
 
         shared.mutex.lock()
         if shared.servings == 0:
+            print(f'savage {i}: empty pot')
             shared.empty_pot.signal(s)
             shared.full_pot.wait()
 
+        print(f'savage {i}: take from pot')
         shared.servings -= 1
         shared.mutex.unlock()
         eat(i)
 
 
 def eat(i):
+    print(f'savage {i}:eat start')
     sleep(randint(50, 200) / 100)
+    print(f'savage {i}:eat end')
 
 
 def cook(cooker_id, shared, m):
     while True:
         shared.empty_pot.wait()
+        print(f'cooker {cooker_id}: cooking')
         sleep(randint(1, 4) / 10)
+        print(f'cooker {cooker_id}: cook {m} servings --> pot')
         shared.barrier.wait(m)
 
 
