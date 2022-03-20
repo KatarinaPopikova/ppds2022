@@ -36,7 +36,7 @@ enters to the barrier fills the pot and unlocks the semaphore for the savage. Th
 chefs wait for the semaphore until a savage informs them again about the empty pot. This happens in a cycle. 
 
 
-**3. Pseudocode**  
+**Pseudocode**  
 
 ```
 Initialize savage_count to 10
