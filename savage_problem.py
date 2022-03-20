@@ -28,18 +28,18 @@ class EventBarrier:
         self.mutex = Mutex()
         self.event = Event()
 
-    def wait(self, portions_count):
+    def wait(self, servings_count):
         """Waiting until all sensors have completed part of the code.
         Between locked mutex is code automatically executed.
         The event method wait() blocks all threads, which invoke it, until method signal() happened.
         The event method clear() activates wait(), when each thread is released from the barrier.
-        When count is full, that is, the chefs cooked m portions and filled the bowl. Savages can eat.
-        :param portions_count: required number of portions
+        When count is full, that is, the chefs cooked m servings and filled the bowl. Savages can eat.
+        :param servings_count: required number of servings
         """
         self.mutex.lock()
         self.count += 1
         if self.count == self.all_thread_count:
-            shared.servings += portions_count
+            shared.servings += servings_count
             shared.full_pot.signal()
             self.count = 0
             self.event.signal()
@@ -56,18 +56,18 @@ class Shared:
     Shared class for all threads.
     """
 
-    def __init__(self, portions_count, chefs_count):
+    def __init__(self, servings_count, chefs_count):
         """
-        servings- the current number of portions in the pot
+        servings- the current number of servings in the pot
         mutex - synchronization tool to make the critical area atomically executed
         empty_pot- signals an empty pot
         full_pot- signals an full pot
         barrier- wait for all chefs
 
-        :param portions_count: required number of servings
+        :param servings_count: required number of servings
         :param chefs_count: the number of chefs
         """
-        self.servings = portions_count
+        self.servings = servings_count
         self.mutex = Mutex()
         self.empty_pot = Semaphore(0)
         self.full_pot = Semaphore(0)
@@ -105,23 +105,23 @@ def savage(savage_id, shared, chefs_count):
         eat(savage_id)
 
 
-def cooking(chef_id, portions_count):
+def cooking(chef_id, servings_count):
     print(f'chef {chef_id}: cooking')
     sleep(randint(1, 4) / 10)
-    print(f'chef {chef_id}: cook {portions_count} servings --> pot')
+    print(f'chef {chef_id}: cook {servings_count} servings --> pot')
 
 
-def cook(chef_id, shared, portions_count):
+def chef(chef_id, shared, servings_count):
     """ Simulation of chefs cooking. When pot is empty, they wake up and start cooking together. The last chef serves
-    portions to the pot and savages can continue in eating.
+    servings to the pot and savages can continue in eating.
 
     :param chef_id: chef id
     :param shared: shared class for all threads
-    :param portions_count: required number of servings
+    :param servings_count: required number of servings
     """
     while True:
         shared.empty_pot.wait()
-        cooking(chef_id, portions_count)
+        cooking(chef_id, servings_count)
         shared.barrier()
 
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         threads.append(t)
 
     for chef_id in range(S):
-        t = Thread(cook, chef_id, shared, M)
+        t = Thread(chef, chef_id, shared, M)
         threads.append(t)
 
     for t in threads:
