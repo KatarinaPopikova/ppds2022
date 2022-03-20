@@ -34,3 +34,45 @@ to ** Tomáš Popík ** from the [lecture]
 (https://www.youtube.com/watch?v=WcaVHQM8zVo&t=901shttps://www.youtube.com/watch?v=WcaVHQM8zVo&t=901s)). The last who
 enters to the barrier fills the pot and unlocks the semaphore for the savage. The savages can continue to eat while the
 chefs wait for the semaphore until a savage informs them again about the empty pot. This happens in a cycle. 
+
+
+**3. Pseudocode**  
+
+```
+Initialize savage_count to 10
+Initialize servings_count to 3
+Initialize chefs_count to 5
+
+CLASS Shared
+    servings = count of servings
+    mutex = Mutex
+    empty_pot = Semaphore to 0
+    full_pot = Semaphore to 0
+    barrier = EventBarrier to chefs_count
+END CLASS
+
+FUNCTION savage:
+INPUT: savage_id, shared, chefs_count
+    WHILE true:
+        lock area
+        IF servings are 0:
+            signal empty_pot to chefs_count
+            wait for full_pot
+        END IF
+        decrease servings 
+        unlock area
+        eat
+    END WHILE
+END FUNCTION
+
+FUNCTION chef:
+INPUT: Shared, thread_name, monitor_count
+    wait for each thread to write data and valid_data invokes a signal
+    WHILE true:
+        wait for empty_pot
+        cooking
+        wait for all chefs
+    END WHILE
+END FUNCTION
+
+```
