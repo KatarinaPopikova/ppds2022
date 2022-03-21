@@ -14,7 +14,7 @@ form for these programs.
 Exercise 3
 -----------
 *******
-**Assignment 2- Savages problem**
+**Assignment 1- Savages problem**
 
 The savages eat serving from the pot. When the savage find out that all the servings are over, he wakes up the chefs and
 the savages wait to the full pot. The chefs help each other with cooking. They fill the pot and when is full, the
