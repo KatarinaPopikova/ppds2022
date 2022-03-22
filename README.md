@@ -11,7 +11,7 @@ and [exercises](https://uim.fei.stuba.sk/i-ppds/5-cvicenie-problem-fajciarov-pro
 form for these programs.
 ***
 
-Exercise 3
+Exercise 4
 -----------
 *******
 **Assignment 1- Savages problem**
