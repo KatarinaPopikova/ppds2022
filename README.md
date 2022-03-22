@@ -71,7 +71,7 @@ INPUT: Shared, thread_name, monitor_count
     WHILE true:
         wait for empty_pot
         cooking
-        wait for all chefs
+        wait for all chefs with barrier
     END WHILE
 END FUNCTION
 
