@@ -28,12 +28,13 @@ class EventBarrier:
         self.mutex = Mutex()
         self.event = Event()
 
-    def wait(self, servings_count):
+    def wait(self, shared, servings_count):
         """Waiting until all sensors have completed part of the code.
         Between locked mutex is code automatically executed.
         The event method wait() blocks all threads, which invoke it, until method signal() happened.
         The event method clear() activates wait(), when each thread is released from the barrier.
         When count is full, that is, the chefs cooked m servings and filled the bowl. Savages can eat.
+        :param shared: shared class for all threads
         :param servings_count: required number of servings
         """
         self.mutex.lock()
@@ -122,7 +123,7 @@ def chef(chef_id, shared, servings_count):
     while True:
         shared.empty_pot.wait()
         cooking(chef_id, servings_count)
-        shared.barrier()
+        shared.barrier.wait(shared, servings_count)
 
 
 if __name__ == '__main__':
