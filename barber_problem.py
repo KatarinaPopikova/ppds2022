@@ -42,8 +42,22 @@ def customer(shared, max_count, barber_semaphore):
         shared.mutex.unlock()
 
 
+def cut_hair(shared):
+    sleep(randint(50, 60) / 100)
+
+
 def barber(shared):
-    pass
+    while True:
+        shared.customer.wait()
+        shared.mutex.lock()
+        active_barber = shared.queue.pop()
+        shared.mutex.unlock()
+        active_barber.signal()
+
+        cut_hair(shared)
+
+        shared.customer_done.wait()
+        shared.barber_done.signal()
 
 
 if __name__ == '__main__':
