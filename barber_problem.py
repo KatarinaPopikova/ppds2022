@@ -1,7 +1,7 @@
 from random import randint
 from time import sleep
 
-from fei.ppds import Thread, Semaphore, Mutex, Event
+from fei.ppds import Thread, Semaphore, Mutex, Event, print
 
 
 class EventBarrier:
@@ -38,13 +38,15 @@ class Shared:
         self.barrier = EventBarrier(2)
 
 
-def haircut_done(shared):
+def haircut_done(shared, activity):
+    print("End of " + activity + ".")
     shared.barrier.wait()
 
 
 def get_hair_cut(shared):
+    print("Customer is sitting to the barber chair.")
     sleep(randint(60, 70) / 100)
-    haircut_done(shared)
+    haircut_done(shared, "styling")
 
 
 def live_life_and_let_hair_grow():
@@ -76,8 +78,9 @@ def customer(shared, max_count, barber_semaphore):
 
 
 def cut_hair(shared):
+    print("Barber is ready for cutting a customer.")
     sleep(randint(50, 60) / 100)
-    haircut_done(shared)
+    haircut_done(shared, "cutting")
 
 
 def barber(shared):
