@@ -90,7 +90,7 @@ def barber(shared):
     while True:
         shared.customer.wait()
         shared.mutex.lock()
-        active_barber = shared.queue.pop()
+        active_barber = shared.queue.pop(0)
         shared.mutex.unlock()
         active_barber.signal()
 
