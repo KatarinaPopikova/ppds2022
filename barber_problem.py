@@ -32,11 +32,11 @@ class Shared:
         self.mutex = Mutex()
 
 
-def get_hair_cut():
+def get_hair_cut(id):
     """Customer inform, when he sits to the barber chair and when he is satisfied with hairstyle."""
     print("Customer is sitting to the barber chair.")
     sleep(randint(30, 40) / 100)
-    print("I am satisfied with this hairstyle")
+    print(f"CUSTOMER {id}:I am satisfied with this hairstyle")
 
 
 def live_life_and_let_hair_grow():
@@ -44,7 +44,7 @@ def live_life_and_let_hair_grow():
     sleep(randint(600, 1500) / 100)
 
 
-def customer(shared, max_count, barber_semaphore):
+def customer(shared, max_count, barber_semaphore, id):
     """Customers are waiting in waiting room while barber calls them to make the hairstyle to one by one.
 
     :param shared: shared class for all threads.
@@ -65,7 +65,7 @@ def customer(shared, max_count, barber_semaphore):
         shared.customer.signal()
         barber_semaphore.wait()
 
-        get_hair_cut()
+        get_hair_cut(id)
 
         shared.customer_done.signal()
         shared.barber_done.wait()
@@ -79,7 +79,7 @@ def cut_hair():
     """ Barber inform, when he is ready to cut hair and when he finished the cutting."""
     print("Barber is ready for cutting a customer.")
     sleep(randint(40, 50) / 100)
-    print("I finished the hairstyle.")
+    print("BARBER: I finished the hairstyle.")
 
 
 def barber(shared):
@@ -106,6 +106,6 @@ if __name__ == '__main__':
     CUSTOMERS_COUNT = 3
     shared = Shared()
     barber = [Thread(barber, shared)]
-    customers = [Thread(customer, shared, MAX_COUNT, Semaphore(0)) for _ in range(CUSTOMERS_COUNT)]
+    customers = [Thread(customer, shared, MAX_COUNT, Semaphore(0), id) for id in range(CUSTOMERS_COUNT)]
 
     [thread.join() for thread in barber + customers]
