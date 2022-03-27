@@ -42,15 +42,15 @@ def haircut_done(activity):
 
 
 def get_hair_cut():
-    """Customer inform, that he sits to the barber chair."""
+    """Customer inform, when he sits to the barber chair and when he is satisfied with hairstyle."""
     print("Customer is sitting to the barber chair.")
-    sleep(randint(60, 70) / 100)
+    sleep(randint(30, 40) / 100)
     haircut_done("styling")
 
 
 def live_life_and_let_hair_grow():
     """Live own life between cutting hair."""
-    sleep(randint(10, 100) / 100)
+    sleep(randint(600, 1500) / 100)
 
 
 def customer(shared, max_count, barber_semaphore):
@@ -85,9 +85,9 @@ def customer(shared, max_count, barber_semaphore):
 
 
 def cut_hair():
-    """ Barber inform, that he is ready to cut hair."""
+    """ Barber inform, when he is ready to cut hair and when he finished the cutting."""
     print("Barber is ready for cutting a customer.")
-    sleep(randint(50, 60) / 100)
+    sleep(randint(40, 50) / 100)
     haircut_done("cutting")
 
 
