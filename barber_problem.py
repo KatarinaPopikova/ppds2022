@@ -32,20 +32,11 @@ class Shared:
         self.mutex = Mutex()
 
 
-def haircut_done(activity):
-    """ Customer informs that he is satisfied with hairstyle.
-        Barber informs that he finished the cutting.
-
-    :param activity: information about human activity.
-    """
-    print("End of " + activity + ".")
-
-
 def get_hair_cut():
     """Customer inform, when he sits to the barber chair and when he is satisfied with hairstyle."""
     print("Customer is sitting to the barber chair.")
     sleep(randint(30, 40) / 100)
-    haircut_done("styling")
+    print("I am satisfied with this hairstyle")
 
 
 def live_life_and_let_hair_grow():
@@ -88,7 +79,7 @@ def cut_hair():
     """ Barber inform, when he is ready to cut hair and when he finished the cutting."""
     print("Barber is ready for cutting a customer.")
     sleep(randint(40, 50) / 100)
-    haircut_done("cutting")
+    print("I finished the hairstyle.")
 
 
 def barber(shared):
