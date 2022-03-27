@@ -9,42 +9,7 @@
 from random import randint
 from time import sleep
 
-from fei.ppds import Thread, Semaphore, Mutex, Event, print
-
-
-class EventBarrier:
-    """"A reusable barrier for end of customer service. It uses event. """
-
-    def __init__(self, thread_count):
-        """Event barrier initialization:
-         all_thread_count - the number of threads to terminate the barrier
-         count - the number of waiting threads in event
-         mutex - synchronization tool to make the critical area atomically executed
-         event - synchronization tool to management threads
-        :param thread_count: 2 (1 barber, 1 customer)
-        """
-        self.all_thread_count = thread_count
-        self.count = 0
-        self.mutex = Mutex()
-        self.event = Event()
-
-    def wait(self):
-        """Waiting until barber end cutting and customer have completed styling own hair.
-        Between locked mutex is code automatically executed.
-        The event method wait() blocks all threads, which invoke it, until method signal() happened.
-        The event method clear() activates wait(), when each thread is released from the barrier.
-        """
-        self.mutex.lock()
-        self.count += 1
-        if self.count == self.all_thread_count:
-            self.count = 0
-            self.event.signal()
-            self.event.clear()
-        last = self.count
-        self.mutex.unlock()
-
-        if last:
-            self.event.wait()
+from fei.ppds import Thread, Semaphore, Mutex, print
 
 
 class Shared:
@@ -64,31 +29,23 @@ class Shared:
         self.customer_done = Semaphore(0)
         self.barber_done = Semaphore(1)
         self.customer = Semaphore(0)
-        self.barber = Semaphore(1)
         self.mutex = Mutex()
-        self.barrier = EventBarrier(2)
 
 
-def haircut_done(shared, activity):
+def haircut_done(activity):
     """ Customer informs that he is satisfied with hairstyle.
         Barber informs that he finished the cutting.
 
-    :param shared: shared class for all threads
     :param activity: information about human activity.
-    :return:
     """
     print("End of " + activity + ".")
-    shared.barrier.wait()
 
 
-def get_hair_cut(shared):
-    """Customer inform, that he sits to the barber chair.
-
-    :param shared: shared class for all threads
-    """
+def get_hair_cut():
+    """Customer inform, that he sits to the barber chair."""
     print("Customer is sitting to the barber chair.")
     sleep(randint(60, 70) / 100)
-    haircut_done(shared, "styling")
+    haircut_done("styling")
 
 
 def live_life_and_let_hair_grow():
@@ -117,7 +74,7 @@ def customer(shared, max_count, barber_semaphore):
         shared.customer.signal()
         barber_semaphore.wait()
 
-        get_hair_cut(shared)
+        get_hair_cut()
 
         shared.customer_done.signal()
         shared.barber_done.wait()
@@ -127,14 +84,11 @@ def customer(shared, max_count, barber_semaphore):
         shared.mutex.unlock()
 
 
-def cut_hair(shared):
-    """ Barber inform, that he is ready to cut hair.
-
-    :param shared: shared class for all threads
-    """
+def cut_hair():
+    """ Barber inform, that he is ready to cut hair."""
     print("Barber is ready for cutting a customer.")
     sleep(randint(50, 60) / 100)
-    haircut_done(shared, "cutting")
+    haircut_done("cutting")
 
 
 def barber(shared):
@@ -149,7 +103,7 @@ def barber(shared):
         shared.mutex.unlock()
         active_barber.signal()
 
-        cut_hair(shared)
+        cut_hair()
 
         shared.customer_done.wait()
         shared.barber_done.signal()
