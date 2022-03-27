@@ -158,8 +158,9 @@ def barber(shared):
 if __name__ == '__main__':
     """Create one barber thread and C_COUNT customers."""
     MAX_COUNT = 6
+    CUSTOMERS_COUNT = 3
     shared = Shared()
     barber = [Thread(barber, shared)]
-    customers = [Thread(customer, shared, MAX_COUNT, Semaphore(0)) for _ in range(3)]
+    customers = [Thread(customer, shared, MAX_COUNT, Semaphore(0)) for _ in range(CUSTOMERS_COUNT)]
 
     [thread.join() for thread in barber + customers]
