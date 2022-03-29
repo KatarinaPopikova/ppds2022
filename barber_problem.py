@@ -57,6 +57,7 @@ def customer(shared, max_count, barber_semaphore, id):
 
         shared.mutex.lock()
         if shared.customers_count == max_count:
+            shared.mutex.unlock()
             return
 
         shared.customers_count += 1
