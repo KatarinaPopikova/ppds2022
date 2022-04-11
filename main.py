@@ -1,4 +1,9 @@
+""""Author: Katarína Stasová
+    License: MIT
+    Program reads a file and find all numbers in this file. Calculates two sums. One for even numbers and the other for
+    odd numbers.
 
+"""
 import re
 
 
