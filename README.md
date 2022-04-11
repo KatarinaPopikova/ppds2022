@@ -39,6 +39,6 @@ coprograms are initialized. When coprogram `evenness` gets an array, it goes thr
 to the `even` coprogram and odd to `odd`. After receiving the GeneratorExit exception, it forwards this exception both
 coprograms, which continue work with numbers.
 
-Last coprograms 'even' and 'odd' are waiting for the input number. When some coprogram gets a number, it sums to the
+Last coprograms `even` and `odd` are waiting for the input number. When some coprogram gets a number, it sums to the
 overall even or odd result. After receiving the GeneratorExit exception, the coprogram activity ends by displaying the
 result on the screen.
