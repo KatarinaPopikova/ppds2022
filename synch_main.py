@@ -7,6 +7,11 @@ import time
 
 
 def get_capital_city(country):
+    """ Synchronously retrieve data from API about countries.
+    Select the capital city and find out the elapsed time
+
+    :param country: country to find data
+    """
     url = 'https://restcountries.com/v3.1/name/' + country
     print(f"Get capital city of {country} from URL: {url}")
     time_start = time.perf_counter()
@@ -17,6 +22,10 @@ def get_capital_city(country):
 
 
 def main():
+    """
+    The main function that calls another function to find the capitals of the countries in the list.
+    It also measures the total duration of the finding capitals for all countries.
+    """
     start_time = time.perf_counter()
 
     [get_capital_city(country) for country in
