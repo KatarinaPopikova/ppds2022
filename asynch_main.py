@@ -1,4 +1,7 @@
-
+""""Author: Katarína Stasová
+    License: MIT
+    The asynchronous program to find the capital city of a country.
+"""
 import aiohttp
 import asyncio
 import time
