@@ -1,3 +1,7 @@
+""""Author: Katarína Stasová
+    License: MIT
+    The synchronous program to find the capital city of a country.
+"""
 import requests
 import time
 
