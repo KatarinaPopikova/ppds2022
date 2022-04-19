@@ -15,8 +15,8 @@ def get_capital_city(country):
     url = 'https://restcountries.com/v3.1/name/' + country
     print(f"Get capital city of {country} from URL: {url}")
     time_start = time.perf_counter()
-    request = requests.get(url).json()[0]
-    capital = request["capital"][0]
+    request = requests.get(url).json()
+    capital = request[0]["capital"][0]
     elapsed = time.perf_counter() - time_start
     print(f"The capital city of {country} is {capital}, elapsed time: {elapsed:.1f}")
 
