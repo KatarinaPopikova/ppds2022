@@ -8,7 +8,7 @@ import time
 
 def get_capital_city(country):
     """ Synchronously retrieve data from API about countries.
-    Select the capital city and find out the elapsed time
+    Select the capital city and find out the elapsed time.
 
     :param country: country to find data
     """
