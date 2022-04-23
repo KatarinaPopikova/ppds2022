@@ -36,12 +36,17 @@ def main():
     img2 = cv.imread(cv.samples.findFile('resources/images/foto (1).jpg'))
     img2 = cv.resize(img2, (SIZE, SIZE), interpolation=cv.INTER_AREA)
     img = original_img.copy()
+
     thread_per_block = (16, 16)
     block_per_grid_x = ceil(img.shape[0] / thread_per_block[0])
     block_per_grid_y = ceil(img.shape[1] / thread_per_block[1])
     block_per_grid = (block_per_grid_x, block_per_grid_y)
+
     my_kernel[block_per_grid, thread_per_block](img, img2)
+
     cv.imshow('images', numpy.concatenate((original_img, img2, img), axis=0))
+
+    # wait to destroying window
     cv.waitKey(0)
     cv.destroyAllWindows()
 
