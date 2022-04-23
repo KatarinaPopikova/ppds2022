@@ -9,7 +9,7 @@ SIZE = 122
 
 @cuda.jit
 def my_kernel(data, data2):
-    x, y= cuda.grid(2)
+    x, y = cuda.grid(2)
     x_max, y_max = data.shape[:2]
     if x < x_max and y < y_max:
         data[x][y][0] = (int(data[x][y][0]) + int(data2[x][y][0])) / 2
