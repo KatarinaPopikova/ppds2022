@@ -9,11 +9,17 @@ from math import ceil
 import cv2 as cv
 import time
 
-SIZE = 122
+SIZE = 122  # size for images shape
 
 
 @cuda.jit
 def my_kernel(data, data2):
+    """ Create an average of two images and save it to data.
+        Simulation calculation on GPU.
+
+    :param data: first image
+    :param data2: second image
+    """
     x, y = cuda.grid(2)
     x_max, y_max = data.shape[:2]
     if x < x_max and y < y_max:
@@ -23,6 +29,9 @@ def my_kernel(data, data2):
 
 
 def main():
+    """ Load images, resize them. Define count of threads per blocks, blocks per grid.
+        Sends the calculation to the GPU and displays the change due to the calculation.
+    """
     original_img = cv.imread(cv.samples.findFile('resources/images/foto.jpg'))
     original_img = cv.resize(original_img, (SIZE, SIZE), interpolation=cv.INTER_AREA)
     img2 = cv.imread(cv.samples.findFile('resources/images/foto (1).jpg'))
