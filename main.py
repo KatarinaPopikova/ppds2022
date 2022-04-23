@@ -7,7 +7,6 @@ import numpy
 from numba import cuda
 from math import ceil
 import cv2 as cv
-import time
 
 SIZE = 122  # size for images shape
 
@@ -41,10 +40,7 @@ def main():
     block_per_grid_x = ceil(img.shape[0] / thread_per_block[0])
     block_per_grid_y = ceil(img.shape[1] / thread_per_block[1])
     block_per_grid = (block_per_grid_x, block_per_grid_y)
-    start_time = time.perf_counter()
     my_kernel[block_per_grid, thread_per_block](img, img2)
-    total_time = time.perf_counter() - start_time
-    print(f"\nTotal time: {total_time:.1f}")
     cv.imshow('images', numpy.concatenate((original_img, img2, img), axis=0))
     cv.waitKey(0)
     cv.destroyAllWindows()
