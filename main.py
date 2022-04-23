@@ -1,3 +1,8 @@
+"""Author: Katarína Stasová
+    License: MIT
+    Simulation of programming on GPU using numba framework. Create an average of two images.
+"""
+
 import numpy
 from numba import cuda
 from math import ceil
