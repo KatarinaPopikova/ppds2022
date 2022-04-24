@@ -61,4 +61,4 @@ and it takes: ![duration_2D](resources/img_2D.png)
 
 If we tested the creation of a three-dimensional distribution of threads and blocks (each thread takes care of one color
 per pixel). The simulation of the calculation took more time ![duration_3D](resources/img_3D.png). If we had the actual
-calculation on the graphics card, it would ktake the same time.  
+calculation on the graphics card, it would take the same time.  
