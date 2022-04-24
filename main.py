@@ -44,7 +44,7 @@ def main():
 
     my_kernel[block_per_grid, thread_per_block](img, img2)
 
-    cv.imshow('images', numpy.concatenate((original_img, img2, img), axis=0))
+    cv.imshow('images', numpy.concatenate((original_img, img2, img), axis=1))
 
     # wait to destroying window
     cv.waitKey(0)
