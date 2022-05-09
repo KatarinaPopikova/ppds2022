@@ -11,7 +11,7 @@ import cv2 as cv
 from time import perf_counter
 import glob
 
-SIZE = 122
+SIZE = 122  # size for images shape
 
 
 @cuda.jit
@@ -63,11 +63,13 @@ def main():
     img1_gpu_out = []
     streams = []
 
+    # create streams
     for _ in range(NUM_ARRAYS):
         streams.append(cuda.stream())
 
     t_start = perf_counter()
 
+    # copy arrays to GPU.
     for k in range(NUM_ARRAYS):
         imgs1_output_gpu.append(cuda.to_device(imgs1_output[k], stream=streams[k]))
         img2_gpu.append(cuda.to_device(imgs2[k], stream=streams[k]))
@@ -80,6 +82,7 @@ def main():
 
         my_kernel[block_per_grid, thread_per_block, streams[k]](imgs1_output_gpu[k], img2_gpu[k])
 
+    # copy arrays from GPU.
     for k in range(NUM_ARRAYS):
         img1_gpu_out.append(imgs1_output_gpu[k].copy_to_host(stream=streams[k]))
 
@@ -87,9 +90,11 @@ def main():
 
     print(f'Total time: {t_end - t_start:.2f} s')
 
+    # show images before and after calculating
     for k in range(NUM_ARRAYS):
         cv.imshow('images' + str(k), numpy.concatenate((imgs1[k], imgs2[k], img1_gpu_out[k]), axis=1))
 
+    # wait to destroying window
     cv.waitKey(0)
     cv.destroyAllWindows()
 
