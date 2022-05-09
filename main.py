@@ -2,6 +2,7 @@ import numpy
 from numba import cuda
 from math import ceil
 import cv2 as cv
+from time import perf_counter
 import glob
 
 SIZE = 122
@@ -44,6 +45,8 @@ def main():
     for _ in range(NUM_ARRAYS):
         streams.append(cuda.stream())
 
+    t_start = perf_counter()
+
     for k in range(NUM_ARRAYS):
         imgs1_output_gpu.append(cuda.to_device(imgs1_output[k], stream=streams[k]))
         img2_gpu.append(cuda.to_device(imgs2[k], stream=streams[k]))
@@ -58,6 +61,10 @@ def main():
 
     for k in range(NUM_ARRAYS):
         img1_gpu_out.append(imgs1_output_gpu[k].copy_to_host(stream=streams[k]))
+
+    t_end = perf_counter()
+
+    print(f'Total time: {t_end - t_start:.2f} s')
 
     for k in range(NUM_ARRAYS):
         cv.imshow('images' + str(k), numpy.concatenate((imgs1[k], imgs2[k], img1_gpu_out[k]), axis=1))
