@@ -10,6 +10,13 @@ SIZE = 122
 
 @cuda.jit
 def my_kernel(data, data2):
+    """ Create an average of two images and save it to data.
+        Simulation calculation on GPU.
+
+    :param data: first image
+    :param data2: second image
+    """
+
     x, y = cuda.grid(2)
     x_max, y_max = data.shape[:2]
     if x < x_max and y < y_max:
@@ -19,6 +26,10 @@ def my_kernel(data, data2):
 
 
 def load_images(path):
+    """ Load images, resize them.
+
+        :type path: path to images
+    """
     images = glob.glob(path + '/*.jpg')
     imgs = []
     imgs_copy = []
@@ -33,6 +44,10 @@ def load_images(path):
 
 
 def main():
+    """ Load images, resize them. Define count of threads per blocks, blocks per grid and streams to optimization.
+        Sends the calculation to the GPU and displays the change due to the calculation.
+    """
+
     NUM_ARRAYS = 3
     imgs1, imgs1_output = load_images('images1')
     imgs2, _ = load_images('images2')
